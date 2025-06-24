@@ -1,6 +1,8 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE OverloadedStrings #-}
 
+module Main where
+
 -- import Data.Function ((&))
 import Miso (consoleLog, run)
 -- import Miso.String (ms)
@@ -11,8 +13,16 @@ import DSL
 foreign export javascript "hs_start" main :: IO ()
 #endif
 
+testThree :: Three ()
+testThree = do
+  scene1 <- scene
+  light1 <- pointLight
+  add scene1 light1
+  pure ()
+
 main :: IO ()
 main = run $ do
+  
   consoleLog "foobar"
 
 
