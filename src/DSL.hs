@@ -8,15 +8,7 @@ import Control.Monad.IO.Class (MonadIO(liftIO))
 import Data.Kind (Type)
 import Language.Javascript.JSaddle as J
 
--------------------------------------------------------------------------------
--- Three types
--------------------------------------------------------------------------------
-
-newtype Scene = Scene { unScene :: JSVal }
-  deriving (MakeArgs, MakeObject, ToJSVal) 
-
-newtype PointLight = PointLight { unPointLight :: JSVal }
-  deriving (MakeArgs, MakeObject, ToJSVal) 
+import API
 
 -------------------------------------------------------------------------------
 -- Three GADT
@@ -30,7 +22,7 @@ data Three :: Type -> Type where
 
   Scene' :: Three Scene
   PointLight' :: Three PointLight
-  Add' :: (MakeArgs a) => Scene -> a -> Three ()
+  Add' :: (Object3DC a, ToJSVal a, MakeArgs b) => a -> b -> Three ()
 
 instance Functor Three where
   fmap = liftM
@@ -59,17 +51,12 @@ scene = Scene'
 pointLight :: Three PointLight
 pointLight = PointLight'
 
-add :: (MakeArgs a) => Scene -> a -> Three ()
+add :: (Object3DC a, ToJSVal a, MakeArgs b) => a -> b -> Three ()
 add = Add'
 
 -------------------------------------------------------------------------------
 -- interpreter
 -------------------------------------------------------------------------------
-
-new' :: MakeArgs a => (JSVal -> b) -> JSString -> a -> JSM b
-new' f name args = do
-  v <- jsg ("THREE" :: JSString) ! name
-  f <$> J.new v args
 
 interpret :: Three a -> JSM a
 
@@ -91,7 +78,7 @@ interpret Scene' =
 interpret PointLight' =
   new' PointLight "PointLight" ()
 
-interpret (Add' s x) =
-  void $ unScene s # ("add" :: JSString) $ x
+interpret (Add' v x) =
+  void $ toJSVal v # ("add" :: JSString) $ x
 
 

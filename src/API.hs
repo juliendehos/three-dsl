@@ -42,22 +42,18 @@ mkGet name v = fromJSValUnchecked =<< v ! name
 mkSet :: (MakeObject a, ToJSVal b) => JSString -> b -> a -> JSM ()
 mkSet name x v = v ^. jss name x
 
+mkSetOpt :: (MakeObject a, ToJSVal b) => JSString -> Maybe b -> a -> JSM ()
+mkSetOpt name mx v = 
+  case mx of
+    Nothing -> v <# name $ ()
+    Just x -> v <# name $ x
+
 mkModify :: (MakeObject a, ToJSVal b, FromJSVal b) => JSString -> (b -> JSM b) -> a -> JSM b
 mkModify name f v = do
   x <- fromJSValUnchecked =<< v ! name
   y <- f x
   v ^. jss name y
   pure y
-
-mkModifyOpt :: (MakeObject a, ToJSVal b, FromJSVal b) => JSString -> (b -> JSM b) -> a -> JSM (Maybe b)
-mkModifyOpt name f v = do
-  mx <- fromJSVal =<< v ! name
-  case mx of
-    Nothing -> pure Nothing
-    Just x -> do
-      y <- f x
-      v ^. jss name y
-      pure $ Just y
 
 -------------------------------------------------------------------------------
 -- Object3D
