@@ -3,7 +3,7 @@
 
 module DSL where
 
-import Control.Monad (ap, liftM, void)
+import Control.Monad (ap, liftM)
 import Control.Monad.IO.Class (MonadIO(liftIO))
 import Data.Kind (Type)
 import Language.Javascript.JSaddle as J
@@ -22,7 +22,9 @@ data Three :: Type -> Type where
 
   Scene' :: Three Scene
   PointLight' :: Three PointLight
-  Add' :: (Object3DC a, ToJSVal a, MakeArgs b) => a -> b -> Three ()
+  Add' :: (Object3DC a, Object3DC b, MakeArgs b) => a -> b -> Three ()
+  GetIntensityLight :: LightC a => a -> Three Double
+  SetIntensityLight :: LightC a => a -> Double -> Three ()
 
 instance Functor Three where
   fmap = liftM
@@ -51,8 +53,14 @@ scene = Scene'
 pointLight :: Three PointLight
 pointLight = PointLight'
 
-add :: (Object3DC a, ToJSVal a, MakeArgs b) => a -> b -> Three ()
+add :: (Object3DC a, Object3DC b, MakeArgs b) => a -> b -> Three ()
 add = Add'
+
+getIntensityLight :: LightC a => a -> Three Double
+getIntensityLight = GetIntensityLight
+
+setIntensityLight :: LightC a => a -> Double -> Three ()
+setIntensityLight = SetIntensityLight
 
 -------------------------------------------------------------------------------
 -- interpreter
@@ -79,6 +87,12 @@ interpret PointLight' =
   new' PointLight "PointLight" ()
 
 interpret (Add' v x) =
-  void $ toJSVal v # ("add" :: JSString) $ x
+  API.add v x
+
+interpret (GetIntensityLight v) =
+  API.getIntensity v
+
+interpret (SetIntensityLight v x) =
+  API.setIntensity x v
 
 

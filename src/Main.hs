@@ -4,7 +4,8 @@
 module Main where
 
 -- import Data.Function ((&))
-import Miso (consoleLog, run)
+import Miso 
+-- import Miso (consoleLog, run)
 -- import Miso.String (ms)
 
 import DSL
@@ -18,6 +19,7 @@ testThree = do
   scene1 <- scene
   light1 <- pointLight
   add scene1 light1
+  setIntensityLight light1 200
   pure ()
 
 main :: IO ()
