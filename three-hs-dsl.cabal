@@ -1,0 +1,14 @@
+cabal-version:          3.0
+name:                   three-hs-dsl
+version:                0.2
+
+executable app
+  hs-source-dirs:       src
+  main-is:              Main.hs
+  other-modules:        DSL
+  build-depends:        base, jsaddle, lens, miso
+  default-language:     GHC2021
+  ghc-options:          -Wall -Wno-type-defaults -no-hs-main -optl-mexec-model=reactor "-optl-Wl,--export=hs_start" -ddump-splices
+  cpp-options:          -DWASM
+  default-extensions:   CPP
+
