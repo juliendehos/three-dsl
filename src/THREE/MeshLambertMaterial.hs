@@ -14,11 +14,12 @@ module THREE.MeshLambertMaterial
     -- * Properties
     -- * Optional properties
     -- * Methods
-  , mat
+  , map
     -- * Helper functions
   ) where
 -----------------------------------------------------------------------------
 import           Language.Javascript.JSaddle
+import           Prelude hiding (map)
 -----------------------------------------------------------------------------
 import           THREE.Internal as THREE
 import           THREE.Material as THREE
@@ -44,8 +45,8 @@ new = THREE.new MeshLambertMaterial "MeshLambertMaterial" ()
 -----------------------------------------------------------------------------
 -- Methods
 -----------------------------------------------------------------------------
-mat :: THREE.Property MeshLambertMaterial "mat" (Maybe THREE.Texture)
-mat = optional
+map :: THREE.Property MeshLambertMaterial "map" (Maybe THREE.Texture)
+map = optional
 -----------------------------------------------------------------------------
 -- Helper functions
 -----------------------------------------------------------------------------

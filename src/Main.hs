@@ -49,11 +49,17 @@ main = run $ do
 
   texture2 <- THREE.TextureLoader.new >>= load "miso.png"
   material2 <- THREE.MeshLambertMaterial.new
-  material2 & mat .= Just texture2
+  material2 & THREE.MeshLambertMaterial.map .= Just texture2
   geometry2 <- THREE.BoxGeometry.new
   mesh2 <- THREE.Mesh.new geometry2 material2
+  -----------------------------------------------------------------------------
   mesh2 ^. position >>= setXYZ 1 0 0
+  -- (mesh2 ^. position) & setXYZ 1 0 0
+  pos <- mesh2 ^. position
+  pos & setXYZ 1 0 0
+
   add scene1 mesh2
+  -----------------------------------------------------------------------------
 
   camera1 <- THREE.PerspectiveCamera.new 70 (winWidth / winHeight) 0.1 100
   camera1 & position !. z .= 6
@@ -78,11 +84,8 @@ main = run $ do
   light1 ^. position >>= (^. z) >>= valToNumber >>= consoleLog . ms . show
 
 
-{-
-
   -- check compile errors
-  -- scene1 & getIntensity >>= valToNumber >>= consoleLog . ms . show
+  -- scene1 ^. intensity >>= valToNumber >>= consoleLog . ms . show
   -- scene1 & setIntensity 200
   -- scene1 & setZ 200
--}
 
