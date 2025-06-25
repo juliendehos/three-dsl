@@ -5,10 +5,29 @@ version:                0.2
 executable app
   hs-source-dirs:       src
   main-is:              Main.hs
-  other-modules:        API DSL
   build-depends:        base, jsaddle, lens, miso
   default-language:     GHC2021
   ghc-options:          -Wall -Wno-type-defaults -no-hs-main -optl-mexec-model=reactor "-optl-Wl,--export=hs_start" -ddump-splices
   cpp-options:          -DWASM
   default-extensions:   CPP
+  other-modules:        API
+                        THREE.BoxGeometry
+                        THREE.BufferGeometry
+                        THREE.Camera
+                        THREE.Euler
+                        THREE.Internal
+                        THREE.Light
+                        THREE.Loader
+                        THREE.Material
+                        THREE.Mesh
+                        THREE.MeshLambertMaterial
+                        THREE.PerspectiveCamera
+                        THREE.PointLight
+                        THREE.Object3D
+                        THREE.Scene
+                        THREE.SphereGeometry
+                        THREE.Texture
+                        THREE.TextureLoader
+                        THREE.Vector3
+                        THREE.WebGLRenderer
 
