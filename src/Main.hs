@@ -9,6 +9,7 @@ import Miso.String (ms)
 
 import API
 import THREE.BoxGeometry
+import THREE.Color
 import THREE.Internal
 import THREE.Light
 import THREE.Mesh
@@ -38,7 +39,16 @@ main = run $ do
 
   light1 <- THREE.PointLight.new
   light1 & intensity .= 300
-  light1 ^. position >>= setXYZ 8 8 8
+
+  color1 <- THREE.Color.new def{g_=0,b_=0}
+  color2 <- THREE.Color.new $ Rgb 0 1 0
+  color3 <- THREE.Color.new $ Hex 255
+  color4 <- THREE.Color.new $ Str "yellow"
+  color5 <- THREE.Color.new $ Str "rgb(0%, 100%, 100%)"
+  light1 & color .= color1
+  -- light1 & color .= THREE.Color.new def  -- TODO?
+
+  light1 ^. position !.. setXYZ 8 8 8
   add scene1 light1
 
   material1 <- THREE.MeshLambertMaterial.new
@@ -52,14 +62,8 @@ main = run $ do
   material2 & THREE.MeshLambertMaterial.map .= Just texture2
   geometry2 <- THREE.BoxGeometry.new
   mesh2 <- THREE.Mesh.new geometry2 material2
-  -----------------------------------------------------------------------------
-  mesh2 ^. position >>= setXYZ 1 0 0
-  -- (mesh2 ^. position) & setXYZ 1 0 0
-  pos <- mesh2 ^. position
-  pos & setXYZ 1 0 0
-
+  mesh2 ^. position !.. setXYZ 1 0 0
   add scene1 mesh2
-  -----------------------------------------------------------------------------
 
   camera1 <- THREE.PerspectiveCamera.new 70 (winWidth / winHeight) 0.1 100
   camera1 & position !. z .= 6
@@ -81,11 +85,5 @@ main = run $ do
   light1 ^. position >>= vector3ToXYZ >>= consoleLog . ms . show
   light1 ^. isLight >>= consoleLog . ms . show
   camera1 ^. position >>= vector3ToXYZ >>= consoleLog . ms . show
-  light1 ^. position >>= (^. z) >>= valToNumber >>= consoleLog . ms . show
-
-
-  -- check compile errors
-  -- scene1 ^. intensity >>= valToNumber >>= consoleLog . ms . show
-  -- scene1 & setIntensity 200
-  -- scene1 & setZ 200
+  light1 ^. position !. z >>= valToNumber >>= consoleLog . ms . show
 
