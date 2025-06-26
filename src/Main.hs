@@ -42,11 +42,12 @@ main = run $ do
 
   color1 <- THREE.Color.new def{g_=0,b_=0}
   color2 <- THREE.Color.new $ Rgb 0 1 0
-  color3 <- THREE.Color.new $ Hex 255
+  color3 <- THREE.Color.new $ Hex 0xff
   color4 <- THREE.Color.new $ Str "yellow"
   color5 <- THREE.Color.new $ Str "rgb(0%, 100%, 100%)"
   light1 & color .= color1
-  -- light1 & color .= THREE.Color.new def  -- TODO?
+
+  -- light1 & color .= THREE.Color.new def
 
   light1 ^. position !.. setXYZ 8 8 8
   add scene1 light1

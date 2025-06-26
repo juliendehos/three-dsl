@@ -23,7 +23,7 @@ newtype Color
   } deriving (MakeObject, ToJSVal, MakeArgs)
 -----------------------------------------------------------------------------
 instance FromJSVal Color where
-  fromJSVal = pure .Just . Color
+  fromJSVal = pure . Just . Color
 -----------------------------------------------------------------------------
 data Params 
   = Rgb
