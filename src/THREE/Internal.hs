@@ -1,16 +1,22 @@
 -----------------------------------------------------------------------------
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE UndecidableInstances       #-}
 {-# LANGUAGE ScopedTypeVariables        #-}
 {-# LANGUAGE TypeApplications           #-}
 {-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE FlexibleInstances          #-}
+{-# LANGUAGE FlexibleContexts           #-}
 {-# LANGUAGE KindSignatures             #-}
 {-# LANGUAGE DataKinds                  #-}
 {-# LANGUAGE GADTs                      #-}
+{-# OPTIONS_GHC -fno-warn-orphans       #-}
 -----------------------------------------------------------------------------
 module THREE.Internal
   ( -- * Types
     Three
   , Property (..)
+  , ReadOnly
+  , Method
   , W (..)
   , X (..)
   , Y (..)
@@ -23,11 +29,14 @@ module THREE.Internal
   , (%=)
   , (*=)
   , (!.)
+  , (!..)
   , property
   , method
   , readonly
   , optional
   , new
+  -- * Classes
+  , Triplet (..)
   ) where
 -----------------------------------------------------------------------------
 import           Control.Monad
@@ -70,6 +79,10 @@ infixr 4 *=
   . Num field => Property object name field -> field -> object -> Three ()
 (*=) (Property setter getter) i object = setter object =<< (*i) <$> getter object
 -----------------------------------------------------------------------------
+type ReadOnly object (name :: Symbol) field = Proxy name -> object -> Three field
+-----------------------------------------------------------------------------
+type Method object (name :: Symbol) args return = Proxy name -> object -> args -> Three return
+-----------------------------------------------------------------------------
 data Property object (name :: Symbol) field
   = Property
   { setProperty :: object -> field -> JSM ()
@@ -111,10 +124,10 @@ readonly
   => Proxy name -> object -> Three return
 readonly name object = fromJSValUnchecked =<< (object ! symbolVal name)
 -----------------------------------------------------------------------------
-new 
+new
   :: MakeArgs args
-  => (JSVal -> con) 
-  -> JSString 
+  => (JSVal -> con)
+  -> JSString
   -> args
   -> Three con
 new f name args = do
@@ -147,6 +160,19 @@ prop1 !. prop2 = Property setter getter
         field_ <- getProperty prop1 record
         setProperty prop2 field_ target
 -----------------------------------------------------------------------------
+-- | This is how we invoke a function
+--
+-- @
+--   object ^. position ..! setXYZ 1 1 1
+-- @
+--
+infixl 1 !..
+(!..)
+  :: Three field
+  -> (field -> Three result)
+  -> Three result
+(!..) = (>>=)
+-----------------------------------------------------------------------------
 class MakeObject object => X object where
   x :: Property object "x" Double
   x = property
@@ -171,7 +197,41 @@ class MakeObject object => W object where
 -----------------------------------------------------------------------------
 instance W JSVal
 -----------------------------------------------------------------------------
-
-
-
-
+-- | Class for dealing with overloaded triplet like arguments
+-- (e.g. 'Vector3', '(Int,Int,Int)'), see use in 'Object3D', 'lookAt'
+class ToJSVal args => Triplet args where
+  triplet :: args -> JSM JSVal
+-----------------------------------------------------------------------------
+instance ToJSVal (x,y,z) => Triplet (x,y,z) where
+  triplet = toJSVal
+-----------------------------------------------------------------------------
+-- Some orphans, please put these back into `jsaddle`
+-----------------------------------------------------------------------------
+-- | This belongs in 'jsaddle'
+instance FromJSVal Function where
+  fromJSVal = pure . pure . Function . Object
+-----------------------------------------------------------------------------
+-- | This belongs in 'jsaddle'
+instance FromJSVal Object where
+  fromJSVal = pure . pure . Object
+-----------------------------------------------------------------------------
+-- | This belongs in 'jsaddle'
+instance MakeArgs Int where
+  makeArgs k = (:[]) <$> toJSVal k
+-----------------------------------------------------------------------------
+-- | This belongs in 'jsaddle'
+instance MakeArgs Object where
+  makeArgs (Object k) = pure [k]
+-----------------------------------------------------------------------------
+-- | This belongs in 'jsaddle'
+instance MakeArgs JSString where
+  makeArgs (JSString k) = makeArgs k
+-----------------------------------------------------------------------------
+-- | This belongs in 'jsaddle'
+instance MakeArgs Function where
+  makeArgs (Function (Object k)) = pure [k]
+-----------------------------------------------------------------------------
+-- | This belongs in 'jsaddle'
+instance ToJSVal (SomeJSArray Immutable) where
+  toJSVal (SomeJSArray k) = pure k
+-----------------------------------------------------------------------------

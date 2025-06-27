@@ -10,7 +10,7 @@ module API
 
 import Control.Monad
 import Control.Lens hiding ((#))
-import Language.Javascript.JSaddle as J hiding (getProp, setProp)
+import Language.Javascript.JSaddle as J
 
 appendInBody :: JSVal -> JSM ()
 appendInBody v = void $ jsg "document" ^. js "body" ^. js1 "appendChild" v

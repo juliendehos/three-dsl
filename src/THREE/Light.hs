@@ -1,7 +1,7 @@
 -----------------------------------------------------------------------------
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DerivingVia #-}
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeApplications #-}
 -----------------------------------------------------------------------------
 module THREE.Light
   ( -- * Types
@@ -14,8 +14,10 @@ module THREE.Light
     -- * Helper functions
   ) where
 -----------------------------------------------------------------------------
+import           Data.Proxy (Proxy(Proxy))
 import           Language.Javascript.JSaddle
 -----------------------------------------------------------------------------
+import           THREE.Color as THREE
 import           THREE.Internal as THREE
 import           THREE.Object3D as THREE
 -----------------------------------------------------------------------------
@@ -24,15 +26,19 @@ class Object3D light => Light light where
   -- read-only properties
   isLight :: Property light "isLight" Bool
   -- properties
+  color :: Property light "color" Color
   intensity :: Property light "intensity" Double
   -- optional properties
   -- methods
+  dispose :: light -> () -> THREE.Three ()
 -----------------------------------------------------------------------------
 instance Light JSVal where
   -- read-only properties
   isLight = property
   -- properties
+  color = property
   intensity = property
   -- optional properties
   -- methods
+  dispose = method (Proxy @"dispose")
 -----------------------------------------------------------------------------

@@ -1,6 +1,10 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE OverloadedStrings #-}
 
+{-# LANGUAGE DataKinds                  #-}
+{-# LANGUAGE TypeApplications        #-}
+{-# OPTIONS_GHC -fno-warn-orphans       #-}
+
 module Main where
 
 import Data.Function ((&))
@@ -22,9 +26,15 @@ import THREE.TextureLoader
 import THREE.Vector3
 import THREE.WebGLRenderer
 
+import Data.Proxy
+import Language.Javascript.JSaddle 
+
 #ifdef WASM
 foreign export javascript "hs_start" main :: IO ()
 #endif
+
+instance FromJSVal Scene where
+  fromJSVal = pure . Just . Scene
 
 main :: IO ()
 main = run $ do
@@ -39,27 +49,24 @@ main = run $ do
   light1 <- THREE.PointLight.new
   light1 & intensity .= 300
   light1 ^. position >>= setXYZ 8 8 8
-  add scene1 light1
+  -- TODO add scene1 light1
+  (_ :: Scene) <- add (Proxy @"add") scene1 light1
 
   material1 <- THREE.MeshLambertMaterial.new
   geometry1 <- THREE.SphereGeometry.new
   mesh1 <- THREE.Mesh.new geometry1 material1
   mesh1 & position !. x .= (-1)
-  add scene1 mesh1
+  -- TODO add scene1 mesh1
+  (_ :: Scene) <- add (Proxy @"add") scene1 mesh1
 
   texture2 <- THREE.TextureLoader.new >>= load "miso.png"
   material2 <- THREE.MeshLambertMaterial.new
   material2 & THREE.MeshLambertMaterial.map .= Just texture2
   geometry2 <- THREE.BoxGeometry.new
   mesh2 <- THREE.Mesh.new geometry2 material2
-  -----------------------------------------------------------------------------
-  mesh2 ^. position >>= setXYZ 1 0 0
-  -- (mesh2 ^. position) & setXYZ 1 0 0
-  pos <- mesh2 ^. position
-  pos & setXYZ 1 0 0
-
-  add scene1 mesh2
-  -----------------------------------------------------------------------------
+  mesh2 ^. position !.. setXYZ 1 0 0
+  -- TODO add scene1 mesh2
+  (_ :: Scene) <- add (Proxy @"add") scene1 mesh2
 
   camera1 <- THREE.PerspectiveCamera.new 70 (winWidth / winHeight) 0.1 100
   camera1 & position !. z .= 6
