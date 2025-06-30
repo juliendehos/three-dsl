@@ -1,7 +1,7 @@
 -----------------------------------------------------------------------------
 {-# LANGUAGE DataKinds                  #-}
 {-# LANGUAGE DerivingVia                #-}
-{-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DeriveAnyClass             #-}
 {-# LANGUAGE OverloadedStrings          #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 -----------------------------------------------------------------------------
@@ -29,14 +29,11 @@ newtype Scene
   = Scene
   { unScene :: JSVal
   } deriving newtype (MakeArgs, MakeObject, ToJSVal)
-    deriving anyclass (Object3D, EventDispatcher)
-
-instance FromJSVal Scene where
-  fromJSVal = pure . Just . Scene
+    deriving anyclass (EventDispatcher, Object3D)
 -----------------------------------------------------------------------------
 new :: THREE.Three Scene
 new = THREE.new Scene "Scene" ()
 -----------------------------------------------------------------------------
-isScene :: ReadOnly Scene "isScene" Bool
-isScene = readonly
+isScene :: Property Scene "isScene" Bool
+isScene = property
 -----------------------------------------------------------------------------

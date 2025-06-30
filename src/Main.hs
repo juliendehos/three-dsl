@@ -22,9 +22,15 @@ import THREE.TextureLoader
 import THREE.Vector3
 import THREE.WebGLRenderer
 
+import Language.Javascript.JSaddle (FromJSVal(fromJSVal))
+
 #ifdef WASM
 foreign export javascript "hs_start" main :: IO ()
 #endif
+
+instance FromJSVal Scene where
+  fromJSVal = pure . Just . Scene
+
 
 main :: IO ()
 main = run $ do
@@ -38,35 +44,33 @@ main = run $ do
 
   light1 <- THREE.PointLight.new
   light1 & intensity .= 100
-  light1 ^. position !.. setXYZ 8 8 8
-  (_ :: Scene) <- add light1 scene1
-  -- (_ :: Scene) <- add scene1 light1   -- this shoudn't compile
-  -- (_ :: Scene) <- pure scene1 !.. add light1
+  -- light1 ^. position !.. setXYZ 8 8 8
+  -- pure scene1 !.. add light1
+  (!..) (pure scene1) add light1 
 
   material1 <- THREE.MeshLambertMaterial.new
   geometry1 <- THREE.SphereGeometry.new
   mesh1 <- THREE.Mesh.new geometry1 material1
-  mesh1 & position !. x .= (-1)
-  (_ :: Scene) <- add mesh1 scene1
-  -- (_ :: Scene) <- add scene1 mesh1   -- this shoudn't compile
+  -- mesh1 & position !. x .= (-1)
+  -- (_ :: Scene) <- add scene1 mesh1
 
   texture2 <- THREE.TextureLoader.new >>= load "miso.png"
   material2 <- THREE.MeshLambertMaterial.new
   material2 & THREE.MeshLambertMaterial.map .= Just texture2
   geometry2 <- THREE.BoxGeometry.new
   mesh2 <- THREE.Mesh.new geometry2 material2
-  mesh2 ^. position !.. setXYZ 1 0 0
-  (_ :: Scene) <- add mesh2 scene1
+  -- mesh2 ^. position !.. setXYZ 1 0 0
+  -- (_ :: Scene) <- add mesh2 scene1
 
   camera1 <- THREE.PerspectiveCamera.new 70 (winWidth / winHeight) 0.1 100
-  camera1 & position !. z .= 6
+  -- camera1 & position !. z .= 6
 
   renderer1 <- THREE.WebGLRenderer.new
   setSize renderer1 winWidthI winHeightI True
 
   setAnimationLoop renderer1 $ \_ _ [valTime] -> do
     time <- valToNumber valTime
-    mesh2 & rotation !. y .= (time/1000)
+    -- mesh2 & rotation !. y .= (time/1000)
     render renderer1 scene1 camera1
 
   domElement renderer1 >>= appendInBody 
@@ -77,6 +81,6 @@ main = run $ do
   light1 ^. intensity >>= valToNumber >>= consoleLog . ms . show
   light1 ^. position >>= vector3ToXYZ >>= consoleLog . ms . show
   camera1 ^. position >>= vector3ToXYZ >>= consoleLog . ms . show
-  light1 ^. position !. z >>= valToNumber >>= consoleLog . ms . show
+  -- light1 ^. position !. z >>= valToNumber >>= consoleLog . ms . show
   light1 ^. isLight >>= consoleLog . ms . show
 

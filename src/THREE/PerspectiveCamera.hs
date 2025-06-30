@@ -1,8 +1,7 @@
 -----------------------------------------------------------------------------
-{-# LANGUAGE DerivingVia                #-}
+{-# LANGUAGE DerivingVia #-}
 {-# LANGUAGE DeriveAnyClass #-}
-{-# LANGUAGE TypeApplications           #-}
-{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 -----------------------------------------------------------------------------
 module THREE.PerspectiveCamera
@@ -30,10 +29,6 @@ newtype PerspectiveCamera
   { unPerspectiveCamera :: JSVal
   } deriving newtype (MakeArgs, MakeObject, ToJSVal)
     deriving anyclass (Object3D, EventDispatcher, Camera)
-
------------------------------------------------------------------------------
-instance FromJSVal PerspectiveCamera where
-  fromJSVal = pure . pure . PerspectiveCamera
 -----------------------------------------------------------------------------
 new
   :: Double
@@ -48,10 +43,4 @@ new
 new fov aspect near far =
   THREE.new PerspectiveCamera "PerspectiveCamera"
     (fov, aspect, near, far)
------------------------------------------------------------------------------
-cam :: PerspectiveCamera
-cam = undefined
------------------------------------------------------------------------------
-test :: Three PerspectiveCamera
-test = cam ^. parent @_ @PerspectiveCamera !.. (translateZ @_ @PerspectiveCamera 1.0)
 -----------------------------------------------------------------------------

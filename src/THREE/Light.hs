@@ -20,12 +20,11 @@ import           THREE.Internal as THREE
 import           THREE.Object3D as THREE
 -----------------------------------------------------------------------------
 -- | https://threejs.org/docs/#api/en/lights/Light
-
 class Object3D light => Light light where
   isLight :: ReadOnly light "isLight" Bool
   isLight = readonly
   intensity :: Property light "intensity" Double
   intensity = property
-
+-----------------------------------------------------------------------------
 instance Light JSVal
-
+-----------------------------------------------------------------------------
