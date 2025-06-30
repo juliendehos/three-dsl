@@ -2,11 +2,11 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 -----------------------------------------------------------------------------
-module THREE.Color
+module THREE.Quaternion
   ( -- * Types
-    Color (..)
+    Quaternion (..)
     -- * Methods
-  , THREE.Color.new
+  , THREE.Quaternion.new
     -- * Properties
   ) where
 -----------------------------------------------------------------------------
@@ -14,13 +14,16 @@ import           Language.Javascript.JSaddle
 -----------------------------------------------------------------------------
 import qualified THREE.Internal as THREE
 -----------------------------------------------------------------------------
--- | https://threejs.org/docs/#api/en/scenes/Color
-newtype Color
-  = Color
-  { unColorCamera :: JSVal
-  } deriving (MakeObject)
+-- | https://threejs.org/docs/#api/en/scenes/Quaternion
+newtype Quaternion
+  = Quaternion
+  { unQuaternionCamera :: JSVal
+  } deriving (ToJSVal, MakeObject, MakeArgs)
 -----------------------------------------------------------------------------
--- | https://threejs.org/docs/#api/en/cameras/Color
-new :: THREE.Three Color
-new = THREE.new Color "Color" ([] :: [JSString])
+instance FromJSVal Quaternion where
+  fromJSVal = pure . pure . Quaternion
+-----------------------------------------------------------------------------
+-- | https://threejs.org/docs/#api/en/cameras/Quaternion
+new :: THREE.Three Quaternion
+new = THREE.new Quaternion "Quaternion" ([] :: [JSString])
 -----------------------------------------------------------------------------

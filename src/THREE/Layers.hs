@@ -2,11 +2,11 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 -----------------------------------------------------------------------------
-module THREE.Color
+module THREE.Layers
   ( -- * Types
-    Color (..)
+    Layers (..)
     -- * Methods
-  , THREE.Color.new
+  , THREE.Layers.new
     -- * Properties
   ) where
 -----------------------------------------------------------------------------
@@ -14,13 +14,16 @@ import           Language.Javascript.JSaddle
 -----------------------------------------------------------------------------
 import qualified THREE.Internal as THREE
 -----------------------------------------------------------------------------
--- | https://threejs.org/docs/#api/en/scenes/Color
-newtype Color
-  = Color
-  { unColorCamera :: JSVal
-  } deriving (MakeObject)
+-- | https://threejs.org/docs/#api/en/scenes/Layers
+newtype Layers
+  = Layers
+  { unLayersCamera :: JSVal
+  } deriving (ToJSVal, MakeObject)
 -----------------------------------------------------------------------------
--- | https://threejs.org/docs/#api/en/cameras/Color
-new :: THREE.Three Color
-new = THREE.new Color "Color" ([] :: [JSString])
+instance FromJSVal Layers where
+  fromJSVal = pure . pure . Layers
+-----------------------------------------------------------------------------
+-- | https://threejs.org/docs/#api/en/cameras/Layers
+new :: THREE.Three Layers
+new = THREE.new Layers "Layers" ()
 -----------------------------------------------------------------------------

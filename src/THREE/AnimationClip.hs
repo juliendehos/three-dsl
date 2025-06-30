@@ -2,11 +2,11 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 -----------------------------------------------------------------------------
-module THREE.Color
+module THREE.AnimationClip
   ( -- * Types
-    Color (..)
+    AnimationClip (..)
     -- * Methods
-  , THREE.Color.new
+  , THREE.AnimationClip.new
     -- * Properties
   ) where
 -----------------------------------------------------------------------------
@@ -14,13 +14,16 @@ import           Language.Javascript.JSaddle
 -----------------------------------------------------------------------------
 import qualified THREE.Internal as THREE
 -----------------------------------------------------------------------------
--- | https://threejs.org/docs/#api/en/scenes/Color
-newtype Color
-  = Color
-  { unColorCamera :: JSVal
-  } deriving (MakeObject)
+-- | https://threejs.org/docs/#api/en/scenes/AnimationClip
+newtype AnimationClip
+  = AnimationClip
+  { unAnimationClipCamera :: JSVal
+  } deriving (ToJSVal, MakeObject)
 -----------------------------------------------------------------------------
--- | https://threejs.org/docs/#api/en/cameras/Color
-new :: THREE.Three Color
-new = THREE.new Color "Color" ([] :: [JSString])
+instance FromJSVal AnimationClip where
+  fromJSVal = pure . pure . AnimationClip
+-----------------------------------------------------------------------------
+-- | https://threejs.org/docs/#api/en/cameras/AnimationClip
+new :: THREE.Three AnimationClip
+new = THREE.new AnimationClip "AnimationClip" ([] :: [JSString])
 -----------------------------------------------------------------------------

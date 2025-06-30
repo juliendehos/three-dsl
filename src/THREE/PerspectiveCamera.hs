@@ -1,7 +1,8 @@
 -----------------------------------------------------------------------------
-{-# LANGUAGE DerivingVia #-}
+{-# LANGUAGE DerivingVia                #-}
+{-# LANGUAGE TypeApplications           #-}
+{-# LANGUAGE OverloadedStrings          #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE OverloadedStrings #-}
 -----------------------------------------------------------------------------
 module THREE.PerspectiveCamera
   ( -- * Types
@@ -17,19 +18,20 @@ module THREE.PerspectiveCamera
 -----------------------------------------------------------------------------
 import           Language.Javascript.JSaddle
 -----------------------------------------------------------------------------
-import           THREE.Camera as THREE
-import           THREE.Internal as THREE
-import           THREE.Object3D as THREE
+import           THREE.Camera          as THREE
+import           THREE.Internal        as THREE
+import           THREE.Object3D        as THREE
+import           THREE.EventDispatcher as THREE
 -----------------------------------------------------------------------------
 -- | https://threejs.org/docs/#api/en/cameras/PerspectiveCamera
 newtype PerspectiveCamera
   = PerspectiveCamera
   { unPerspectiveCamera :: JSVal
-  } deriving (MakeArgs, MakeObject, ToJSVal) 
-    deriving newtype Camera
-    deriving Object3D via JSVal
+  } deriving (MakeArgs, MakeObject, ToJSVal)
+    deriving (Object3D, EventDispatcher, Camera)
 -----------------------------------------------------------------------------
--- Constructors
+instance FromJSVal PerspectiveCamera where
+  fromJSVal = pure . pure . PerspectiveCamera
 -----------------------------------------------------------------------------
 new
   :: Double
@@ -41,17 +43,13 @@ new
   -> Double
   -- ^ Far
   -> THREE.Three PerspectiveCamera
-new fov aspect near far = 
+new fov aspect near far =
   THREE.new PerspectiveCamera "PerspectiveCamera"
     (fov, aspect, near, far)
 -----------------------------------------------------------------------------
--- Read-only properties
+cam :: PerspectiveCamera
+cam = undefined
 -----------------------------------------------------------------------------
--- Properties
------------------------------------------------------------------------------
--- Optional properties
------------------------------------------------------------------------------
--- Methods
------------------------------------------------------------------------------
--- Helper functions
+test :: Three PerspectiveCamera
+test = cam ^. parent @_ @PerspectiveCamera !.. (translateZ @_ @PerspectiveCamera 1.0)
 -----------------------------------------------------------------------------

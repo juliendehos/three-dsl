@@ -11,20 +11,27 @@ executable app
   cpp-options:          -DWASM
   default-extensions:   CPP
   other-modules:        API
+                        THREE.AnimationClip
                         THREE.BoxGeometry
                         THREE.BufferGeometry
                         THREE.Camera
                         THREE.Color
                         THREE.Euler
+                        THREE.EventDispatcher
                         THREE.Internal
+                        THREE.Layers
                         THREE.Light
                         THREE.Loader
                         THREE.Material
+                        THREE.Matrix3
+                        THREE.Matrix4
                         THREE.Mesh
                         THREE.MeshLambertMaterial
+                        THREE.Object3D
                         THREE.PerspectiveCamera
                         THREE.PointLight
-                        THREE.Object3D
+                        THREE.Quaternion
+                        THREE.Raycaster
                         THREE.Scene
                         THREE.SphereGeometry
                         THREE.Texture

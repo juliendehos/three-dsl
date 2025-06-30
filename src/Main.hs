@@ -5,11 +5,10 @@ module Main where
 
 import Data.Function ((&))
 import Miso (consoleLog, run)
-import Miso.String (ms)
+import Miso.String (ms, MisoString)
 
 import API
 import THREE.BoxGeometry
-import THREE.Color
 import THREE.Internal
 import THREE.Light
 import THREE.Mesh
@@ -38,25 +37,18 @@ main = run $ do
   scene1 <- THREE.Scene.new 
 
   light1 <- THREE.PointLight.new
-  light1 & intensity .= 300
-
-  color1 <- THREE.Color.new def{g_=0,b_=0}
-  color2 <- THREE.Color.new $ Rgb 0 1 0
-  color3 <- THREE.Color.new $ Hex 0xff
-  color4 <- THREE.Color.new $ Str "yellow"
-  color5 <- THREE.Color.new $ Str "rgb(0%, 100%, 100%)"
-  light1 & color .= color1
-
-  -- light1 & color .= THREE.Color.new def
-
+  light1 & intensity .= 100
   light1 ^. position !.. setXYZ 8 8 8
-  add scene1 light1
+  (_ :: Scene) <- add light1 scene1
+  -- (_ :: Scene) <- add scene1 light1   -- this shoudn't compile
+  -- (_ :: Scene) <- add scene1 light1   -- this shoudn't compile
+  -- (_ :: Scene) <- pure scene1 !.. add light1
 
   material1 <- THREE.MeshLambertMaterial.new
   geometry1 <- THREE.SphereGeometry.new
   mesh1 <- THREE.Mesh.new geometry1 material1
   mesh1 & position !. x .= (-1)
-  add scene1 mesh1
+  (_ :: Scene) <- add mesh1 scene1
 
   texture2 <- THREE.TextureLoader.new >>= load "miso.png"
   material2 <- THREE.MeshLambertMaterial.new
@@ -64,7 +56,7 @@ main = run $ do
   geometry2 <- THREE.BoxGeometry.new
   mesh2 <- THREE.Mesh.new geometry2 material2
   mesh2 ^. position !.. setXYZ 1 0 0
-  add scene1 mesh2
+  (_ :: Scene) <- add mesh2 scene1
 
   camera1 <- THREE.PerspectiveCamera.new 70 (winWidth / winHeight) 0.1 100
   camera1 & position !. z .= 6
@@ -84,7 +76,7 @@ main = run $ do
   light1 & intensity %= (*2)
   light1 ^. intensity >>= valToNumber >>= consoleLog . ms . show
   light1 ^. position >>= vector3ToXYZ >>= consoleLog . ms . show
-  light1 ^. isLight >>= consoleLog . ms . show
   camera1 ^. position >>= vector3ToXYZ >>= consoleLog . ms . show
   light1 ^. position !. z >>= valToNumber >>= consoleLog . ms . show
+  light1 ^. isLight >>= consoleLog . ms . show
 

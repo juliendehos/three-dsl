@@ -3,7 +3,6 @@
 {-# LANGUAGE DerivingVia #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TypeApplications #-}
 -----------------------------------------------------------------------------
 module THREE.MeshLambertMaterial
   ( -- * Types
