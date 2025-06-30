@@ -1,5 +1,6 @@
 -----------------------------------------------------------------------------
 {-# LANGUAGE DerivingVia #-}
+{-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE OverloadedStrings #-}
 -----------------------------------------------------------------------------
@@ -26,8 +27,12 @@ import           THREE.EventDispatcher as THREE
 newtype PointLight
   = PointLight
   { unPointLight :: JSVal
-  } deriving (MakeArgs, MakeObject, ToJSVal)
-    deriving (Light, Object3D, EventDispatcher)
+  } -- deriving (MakeArgs, MakeObject, ToJSVal)
+    -- deriving (Light, EventDispatcher)
+    deriving newtype (MakeArgs, MakeObject, ToJSVal)
+    deriving anyclass (Object3D, Light, EventDispatcher)
+
+-- instance Object3D PointLight
 
 instance FromJSVal PointLight where
   fromJSVal = pure . Just . PointLight

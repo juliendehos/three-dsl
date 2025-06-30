@@ -1,5 +1,6 @@
 -----------------------------------------------------------------------------
 {-# LANGUAGE DerivingVia                #-}
+{-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE TypeApplications           #-}
 {-# LANGUAGE OverloadedStrings          #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
@@ -27,8 +28,13 @@ import           THREE.EventDispatcher as THREE
 newtype PerspectiveCamera
   = PerspectiveCamera
   { unPerspectiveCamera :: JSVal
-  } deriving (MakeArgs, MakeObject, ToJSVal)
-    deriving (Object3D, EventDispatcher, Camera)
+  } -- deriving (MakeArgs, MakeObject, ToJSVal)
+    -- deriving (EventDispatcher, Camera)
+    deriving newtype (MakeArgs, MakeObject, ToJSVal)
+    deriving anyclass (Object3D, Camera, EventDispatcher)
+
+-- instance Object3D PerspectiveCamera
+
 -----------------------------------------------------------------------------
 instance FromJSVal PerspectiveCamera where
   fromJSVal = pure . pure . PerspectiveCamera

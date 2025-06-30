@@ -97,8 +97,8 @@ class EventDispatcher object => Object3D object where
   defaultMatrixWorldAutoUpdate :: Property object "DEFAULT_MATRIX_WORLD_AUTO_UPDATE" Bool
   defaultMatrixWorldAutoUpdate = property
 
-  add :: (MakeArgs arg, FromJSVal return, Object3D return, Object3D arg) => Method object "add" arg return
-  -- add :: (MakeArgs arg, FromJSVal object, Object3D arg) => Method object "add" arg object
+  -- add :: (MakeArgs arg, FromJSVal return, Object3D return, Object3D arg) => Method object "add" arg return
+  add :: (MakeArgs arg, FromJSVal object, Object3D arg) => Method object "add" arg object
   add = method (Proxy @"add")
 
   applyMatrix4 :: Method object "applyMatrix4" Matrix4 JSUndefined

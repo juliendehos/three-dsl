@@ -41,7 +41,6 @@ main = run $ do
   light1 ^. position !.. setXYZ 8 8 8
   (_ :: Scene) <- add light1 scene1
   -- (_ :: Scene) <- add scene1 light1   -- this shoudn't compile
-  -- (_ :: Scene) <- add scene1 light1   -- this shoudn't compile
   -- (_ :: Scene) <- pure scene1 !.. add light1
 
   material1 <- THREE.MeshLambertMaterial.new
@@ -49,6 +48,7 @@ main = run $ do
   mesh1 <- THREE.Mesh.new geometry1 material1
   mesh1 & position !. x .= (-1)
   (_ :: Scene) <- add mesh1 scene1
+  -- (_ :: Scene) <- add scene1 mesh1   -- this shoudn't compile
 
   texture2 <- THREE.TextureLoader.new >>= load "miso.png"
   material2 <- THREE.MeshLambertMaterial.new
